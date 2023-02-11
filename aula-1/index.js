@@ -1,39 +1,59 @@
-const { edGalho, edFolha } = require('./arrays');
+const { edGalho, edFolha } = require("./arrays");
 
-function juntaListas(lista1, lista2) {
+function verificarItemMenorValor(arrayListas) {
+  let itemMenorValor = null;
+  let indiceListaMenorValor = 0;
+  let indiceItemMenorValor = 0;
+
+  for (let iLista = 0; iLista < arrayListas.length; iLista++) {
+    const lista = arrayListas[iLista];
+
+    if (!lista.length) continue;
+
+    itemMenorValor = itemMenorValor ?? lista[0];
+
+    for (let iItem = 0; iItem < lista.length; iItem++) {
+      const itemLista = lista[iItem];
+
+      if (itemLista.preco < itemMenorValor.preco) {
+        itemMenorValor = itemLista;
+        indiceListaMenorValor = iLista;
+        indiceItemMenorValor = iItem;
+      }
+    }
+  }
+
+  return { itemMenorValor, indiceListaMenorValor, indiceItemMenorValor };
+}
+
+function juntarListas(arrayListas) {
+  const listaPesquisa = [...arrayListas];
   let listaFinal = [];
-  let posicaoAtualLista1 = 0;
-  let posicaoAtualLista2 = 0;
-  let atual = 0;
+  let comprimentoLista = 0;
 
-  while (posicaoAtualLista1 < lista1.length && posicaoAtualLista2 < lista2.length) {
-    let produtoAtualLista1 = lista1[posicaoAtualLista1];
-    let produtoAtualLista2 = lista2[posicaoAtualLista2];
+  for (let i = 0; i < arrayListas.length; i++) {
+    comprimentoLista += arrayListas[i].length;
+  }
 
-    if (produtoAtualLista1.preco < produtoAtualLista2.preco) {
-      listaFinal[atual] = produtoAtualLista1;
-      posicaoAtualLista1++;
-    } else {
-      listaFinal[atual] = produtoAtualLista2;
-      posicaoAtualLista2++;
+  for (let i = 0; i < comprimentoLista; i++) {
+    const menorItem = verificarItemMenorValor(listaPesquisa);
+
+    if (listaPesquisa.length === 1) {
+      listaFinal[i] = listaPesquisa[0];
+      break;
     }
 
-    atual++;
-  }
+    listaFinal[i] = menorItem.itemMenorValor;
 
-  while (posicaoAtualLista1 < lista1.length) {
-    listaFinal[atual] = lista1[posicaoAtualLista1];
-    posicaoAtualLista1++;
-    atual++;
-  }
-
-  while (posicaoAtualLista2 < lista2.length) {
-    listaFinal[atual] = lista2[posicaoAtualLista2];
-    posicaoAtualLista2++;
-    atual++;
+    // Aqui não pude evitar usar um método nativo e acabei usando o splice para remover os itens que já foram encontrados:
+    listaPesquisa[menorItem.indiceListaMenorValor].splice(
+      menorItem.indiceItemMenorValor,
+      1
+    );
   }
 
   return listaFinal;
 }
 
-console.log(juntaListas(edGalho, edFolha))
+// console.log(juntarListas([edGalho, edFolha]));
+console.log(juntarListas([edGalho, edFolha]));
